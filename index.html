@@ -179,6 +179,398 @@ document.addEventListener("DOMContentLoaded",init);
 
 <div class="qr">▦ &nbsp; Pindai QR Code Lain</div>
 
+
+<!-- ADMIN / EDIT MENU -->
+<button id="openAdminBtn" class="admin-open" type="button">🔐 EDIT MENU / ADMIN</button>
+
+<div id="adminPanel" class="admin-overlay" aria-hidden="true">
+  <div class="admin-box">
+    <div class="admin-head">
+      <div>
+        <div class="admin-title">⚙️ Admin / Edit Menu</div>
+        <div class="admin-sub">Edit menu langsung dari HP</div>
+      </div>
+      <button id="closeAdminBtn" class="admin-close" type="button">✕</button>
+    </div>
+
+    <div class="admin-note">
+      💡 Ubah data yang diperlukan, lalu tekan <b>💾 SIMPAN PERUBAHAN</b>.
+    </div>
+
+    <div class="admin-grid">
+      <label>Nama SPPG<input id="edSppg"></label>
+      <label>Nama Yayasan<input id="edYayasan"></label>
+      <label>Nama Menu<input id="edMenu"></label>
+      <label>Tanggal<input id="edTanggal" type="date"></label>
+      <label>Waktu Produksi<input id="edProduksi"></label>
+      <label>Waktu Pengiriman<input id="edPengiriman"></label>
+      <label>Penerima Manfaat<input id="edPenerima"></label>
+      <label>Batas Konsumsi<input id="edBatas"></label>
+      <label>Masa Aman<input id="edMasa"></label>
+    </div>
+
+    <div class="admin-title2">📊 Nilai Gizi Per Porsi</div>
+
+    <div class="admin-portion"><h3>🍱 Porsi Besar</h3><div class="admin-grid">
+      <label>Energi<input id="besarEnergi"></label><label>Karbohidrat<input id="besarKarbo"></label>
+      <label>Protein<input id="besarProtein"></label><label>Lemak<input id="besarLemak"></label><label>Serat<input id="besarSerat"></label>
+    </div></div>
+
+    <div class="admin-portion"><h3>🥗 Porsi Kecil</h3><div class="admin-grid">
+      <label>Energi<input id="kecilEnergi"></label><label>Karbohidrat<input id="kecilKarbo"></label>
+      <label>Protein<input id="kecilProtein"></label><label>Lemak<input id="kecilLemak"></label><label>Serat<input id="kecilSerat"></label>
+    </div></div>
+
+    <div class="admin-portion"><h3>🍼 Porsi Bumil</h3><div class="admin-grid">
+      <label>Energi<input id="bumilEnergi"></label><label>Karbohidrat<input id="bumilKarbo"></label>
+      <label>Protein<input id="bumilProtein"></label><label>Lemak<input id="bumilLemak"></label><label>Serat<input id="bumilSerat"></label>
+    </div></div>
+
+    <div class="admin-portion"><h3>🍼 Porsi Busui</h3><div class="admin-grid">
+      <label>Energi<input id="busuiEnergi"></label><label>Karbohidrat<input id="busuiKarbo"></label>
+      <label>Protein<input id="busuiProtein"></label><label>Lemak<input id="busuiLemak"></label><label>Serat<input id="busuiSerat"></label>
+    </div></div>
+
+    <div class="admin-portion"><h3>👶 Porsi Balita</h3><div class="admin-grid">
+      <label>Energi<input id="balitaEnergi"></label><label>Karbohidrat<input id="balitaKarbo"></label>
+      <label>Protein<input id="balitaProtein"></label><label>Lemak<input id="balitaLemak"></label><label>Serat<input id="balitaSerat"></label>
+    </div></div>
+
+    <div class="admin-title2">📷 Foto Menu</div>
+    <div class="admin-photo">
+      Pilih foto dari HP
+      <input id="edFoto" type="file" accept="image/*">
+      <img id="edPreview" class="admin-preview" alt="Preview foto">
+    </div>
+
+    <div class="admin-actions">
+      <button id="saveAdminBtn" class="admin-save" type="button">💾 SIMPAN PERUBAHAN</button>
+      <button id="resetAdminBtn" class="admin-reset" type="button">↩️ RESET</button>
+    </div>
+    <div id="edStatus" class="admin-status"></div>
+  </div>
+</div>
+
+<div class="footer">SPPG Nganjuk Loceret Candirejo — <b>Yayasan Darul Falah Baron</b><br>Semua tulisan, foto, angka gizi, dan kontak dapat diedit di bagian <b>DATA</b> pada file HTML.</div>
+</main>
+<script>
+document.querySelectorAll(".portion").forEach(b=>b.onclick=()=>setPorsi(b.dataset.porsi));
+document.querySelectorAll(".topic").forEach(b=>b.onclick=()=>{document.querySelectorAll(".topic").forEach(x=>x.classList.remove("active"));b.classList.add("active")});
+</script>
+
+<script>
+(function () {
+  "use strict";
+
+  const STORE = "SPPG_MBG_ADMIN_V3";
+  const PHOTO = "SPPG_MBG_PHOTO_V3";
+
+  function get(id) {
+    const el = document.getElementById(id);
+    return el ? el.value : "";
+  }
+  function set(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.value = value ?? "";
+  }
+
+  function defaults() {
+    return {
+      sppg: "SPPG NGANJUK LOCERET CANDIREJO",
+      yayasan: "Yayasan Darul Falah Baron",
+      menu: "Nasi Putih + Sempol Ayam Saus Bangkok + Tahu Kremes + Mix Vege + Buah Anggur",
+      tanggal: "2026-09-18",
+      produksi: "06:00 WIB",
+      pengiriman: "07:30 WIB",
+      penerima: "2271 Siswa",
+      batas: "maksimal Pukul 10.45 WIB",
+      masa: "4 Jam setelah diproduksi",
+      gizi: {
+        besar:{energi:"652.8 Kcal",karbo:"93.7 g",protein:"29.9 g",lemak:"18.9 g",serat:"1 g"},
+        kecil:{energi:"— Kcal",karbo:"— g",protein:"— g",lemak:"— g",serat:"— g"},
+        bumil:{energi:"— Kcal",karbo:"— g",protein:"— g",lemak:"— g",serat:"— g"},
+        busui:{energi:"— Kcal",karbo:"— g",protein:"— g",lemak:"— g",serat:"— g"},
+        balita:{energi:"— Kcal",karbo:"— g",protein:"— g",lemak:"— g",serat:"— g"}
+      }
+    };
+  }
+
+  function data() {
+    try {
+      return JSON.parse(localStorage.getItem(STORE)) || defaults();
+    } catch(e) {
+      return defaults();
+    }
+  }
+
+  function showAdmin() {
+    const p = document.getElementById("adminPanel");
+    if (!p) return;
+    fillForm();
+    p.style.display = "block";
+    p.setAttribute("aria-hidden","false");
+    document.body.style.overflow = "hidden";
+  }
+
+  function hideAdmin() {
+    const p = document.getElementById("adminPanel");
+    if (!p) return;
+    p.style.display = "none";
+    p.setAttribute("aria-hidden","true");
+    document.body.style.overflow = "";
+  }
+
+  function fillForm() {
+    const d = data();
+    set("edSppg",d.sppg); set("edYayasan",d.yayasan); set("edMenu",d.menu);
+    set("edTanggal",d.tanggal); set("edProduksi",d.produksi);
+    set("edPengiriman",d.pengiriman); set("edPenerima",d.penerima);
+    set("edBatas",d.batas); set("edMasa",d.masa);
+
+    ["besar","kecil","bumil","busui","balita"].forEach(function(p){
+      set(p+"Energi",d.gizi[p].energi);
+      set(p+"Karbo",d.gizi[p].karbo);
+      set(p+"Protein",d.gizi[p].protein);
+      set(p+"Lemak",d.gizi[p].lemak);
+      set(p+"Serat",d.gizi[p].serat);
+    });
+
+    const photo = localStorage.getItem(PHOTO);
+    const preview = document.getElementById("edPreview");
+    if (photo && preview) {
+      preview.src = photo;
+      preview.style.display = "block";
+    }
+  }
+
+  function gizi(p) {
+    return {
+      energi:get(p+"Energi"), karbo:get(p+"Karbo"), protein:get(p+"Protein"),
+      lemak:get(p+"Lemak"), serat:get(p+"Serat")
+    };
+  }
+
+  function save() {
+    const d = {
+      sppg:get("edSppg"), yayasan:get("edYayasan"), menu:get("edMenu"),
+      tanggal:get("edTanggal"), produksi:get("edProduksi"),
+      pengiriman:get("edPengiriman"), penerima:get("edPenerima"),
+      batas:get("edBatas"), masa:get("edMasa"),
+      gizi:{
+        besar:gizi("besar"), kecil:gizi("kecil"), bumil:gizi("bumil"),
+        busui:gizi("busui"), balita:gizi("balita")
+      }
+    };
+
+    localStorage.setItem(STORE,JSON.stringify(d));
+    apply(d);
+
+    const status=document.getElementById("edStatus");
+    if(status) {
+      status.textContent="✅ Berhasil disimpan";
+      status.style.color="#07885e";
+    }
+    setTimeout(hideAdmin,800);
+  }
+
+  function apply(d) {
+    const heroTitle=document.querySelector(".hero h1");
+    if(heroTitle) heroTitle.textContent=d.menu;
+
+    const badge=document.querySelector(".hero .badge");
+    if(badge) badge.textContent=d.sppg;
+
+    const rows=document.querySelectorAll(".row .value");
+    if(rows[0]) rows[0].textContent=d.produksi;
+    if(rows[1]) rows[1].textContent=d.pengiriman;
+    if(rows[2]) rows[2].textContent=d.penerima;
+
+    const safe=document.querySelector(".safe strong");
+    if(safe) safe.textContent=d.batas;
+    const masa=document.querySelector(".safe-row b");
+    if(masa) masa.textContent=d.masa;
+
+    updatePortion("besar");
+  }
+
+  function updatePortion(p) {
+    const d=data().gizi[p];
+    if(!d) return;
+
+    const map={besar:"PORSI BESAR",kecil:"PORSI KECIL",bumil:"PORSI BUMIL",busui:"PORSI BUSUI",balita:"PORSI BALITA"};
+    const ids={energi:"energi",total:"totalEnergi",karbo:"karbo",protein:"protein",lemak:"lemak",serat:"serat"};
+
+    if(document.getElementById(ids.energi)) document.getElementById(ids.energi).textContent=d.energi;
+    if(document.getElementById(ids.total)) document.getElementById(ids.total).textContent=d.energi;
+    if(document.getElementById(ids.karbo)) document.getElementById(ids.karbo).textContent=d.karbo;
+    if(document.getElementById(ids.protein)) document.getElementById(ids.protein).textContent=d.protein;
+    if(document.getElementById(ids.lemak)) document.getElementById(ids.lemak).textContent=d.lemak;
+    if(document.getElementById(ids.serat)) document.getElementById(ids.serat).textContent=d.serat;
+    if(document.getElementById("namaPorsi")) document.getElementById("namaPorsi").textContent=map[p];
+    if(document.getElementById("judulPorsi")) document.getElementById("judulPorsi").textContent=map[p];
+  }
+
+  document.addEventListener("DOMContentLoaded",function(){
+    const open=document.getElementById("openAdminBtn");
+    const close=document.getElementById("closeAdminBtn");
+    const saveBtn=document.getElementById("saveAdminBtn");
+    const reset=document.getElementById("resetAdminBtn");
+    const photo=document.getElementById("edFoto");
+
+    if(open) open.addEventListener("click",showAdmin);
+    if(close) close.addEventListener("click",hideAdmin);
+    if(saveBtn) saveBtn.addEventListener("click",save);
+
+    if(reset) reset.addEventListener("click",function(){
+      if(confirm("Kembalikan data awal?")) {
+        localStorage.removeItem(STORE);
+        localStorage.removeItem(PHOTO);
+        location.reload();
+      }
+    });
+
+    if(photo) photo.addEventListener("change",function(){
+      const file=this.files && this.files[0];
+      if(!file) return;
+      const reader=new FileReader();
+      reader.onload=function(e){
+        localStorage.setItem(PHOTO,e.target.result);
+        const preview=document.getElementById("edPreview");
+        if(preview){preview.src=e.target.result;preview.style.display="block";}
+        const img=document.querySelector(".photo img");
+        if(img) img.src=e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    const saved=localStorage.getItem(STORE);
+    if(saved) {
+      try { apply(JSON.parse(saved)); } catch(e) {}
+    }
+  });
+})();
+</script>
+
+</body></html> instansi:"BADAN GIZI NASIONAL",
+ negara:"REPUBLIK INDONESIA",
+ judulPanduan:"PANDUAN GIZI SEIMBANG",
+ tanggalData:"2026-09-18",
+ tanggalHariIni:"2026-09-20",
+ sppg:"SPPG NGANJUK LOCERET CANDIREJO",
+ yayasan:"YAYASAN DARUL FALAH BARON",
+ menu:"Nasi Putih + Sempol Ayam Saus Bangkok + Tahu Kremes + Mix Vege + Buah Anggur",
+ tanggalMenu:"2026-09-18",
+ porsi:"PORSI BESAR",
+ waktuProduksi:"06:00 WIB",
+ waktuPengiriman:"07:30 WIB",
+ penerima:"2271 Siswa",
+ totalEnergi:"652.8 Kcal",
+ batasKonsumsi:"maksimal Pukul 10.45 WIB",
+ masaAman:"4 Jam setelah diproduksi",
+ gizi:{
+  "Porsi Besar": {energi:"652.8 Kcal",karbohidrat:"93.7 g",protein:"29.9 g",lemak:"18.9 g",serat:"1 g"},
+  "Porsi Kecil": {energi:"— Kcal",karbohidrat:"— g",protein:"— g",lemak:"— g",serat:"— g"},
+  "Porsi Bumil": {energi:"— Kcal",karbohidrat:"— g",protein:"— g",lemak:"— g",serat:"— g"},
+  "Porsi Busui": {energi:"— Kcal",karbohidrat:"— g",protein:"— g",lemak:"— g",serat:"— g"},
+  "Porsi Balita": {energi:"— Kcal",karbohidrat:"— g",protein:"— g",lemak:"— g",serat:"— g"}
+ },
+ foto:"foto-menu.jpg",
+ whatsapp:"",
+ instagram:"",
+ tiktok:"",
+ facebook:""
+};
+/* ================================================================ */
+function $(id){return document.getElementById(id)}
+function text(id,v){$(id).textContent=v}
+function init(){
+ $("logo").src=DATA.logo;
+ $("logo").onerror=()=>{$("logo").style.display="none"};
+ text("instansi",DATA.instansi);text("negara",DATA.negara);text("panduan",DATA.judulPanduan);
+ text("tanggalData",DATA.tanggalData);text("tanggalHariIni",DATA.tanggalHariIni);
+ text("sppg",DATA.sppg);text("porsi",DATA.porsi);text("menu",DATA.menu);text("tanggalMenu",DATA.tanggalMenu);
+ text("produksi",DATA.waktuProduksi);text("pengiriman",DATA.waktuPengiriman);text("penerima",DATA.penerima);text("total",DATA.totalEnergi);
+ text("batas",DATA.batasKonsumsi);text("masa",DATA.masaAman);
+ setPorsi(DATA.porsi);
+ $("foto").src=DATA.foto;$("foto").onload=()=>{$("foto").style.display="block";$("placeholder").style.display="none"};
+ $("wa").href=DATA.whatsapp||"#";$("ig").href=DATA.instagram||"#";$("tt").href=DATA.tiktok||"#";$("fb").href=DATA.facebook||"#";
+}
+function setPorsi(namaPorsi){
+ const g=DATA.gizi[namaPorsi]||DATA.gizi["Porsi Besar"];
+ text("porsi",namaPorsi.toUpperCase());
+ text("gPorsi",namaPorsi.toUpperCase());
+ text("energi",g.energi); text("karbo",g.karbohidrat);
+ text("protein",g.protein); text("lemak",g.lemak); text("serat",g.serat);
+ document.querySelectorAll(".portion").forEach(b=>b.classList.toggle("active",b.dataset.porsi===namaPorsi));
+}
+function kirimWA(){if(!DATA.whatsapp){alert("Masukkan nomor WhatsApp pada DATA.whatsapp terlebih dahulu.");return}let nomor=DATA.whatsapp.replace(/\D/g,"");let msg=encodeURIComponent("Pengaduan SPPG "+DATA.sppg+"\nNama: "+$("nama").value+"\nHP: "+$("hp").value+"\nKeluhan: "+$("keluhan").value);window.open("https://wa.me/"+nomor+"?text="+msg,"_blank")}
+document.addEventListener("DOMContentLoaded",init);
+</script>
+
+<div class="center">
+<img id="logo" class="logo" alt="Logo">
+<div id="instansi" class="instansi"></div><div id="negara" class="negara"></div>
+</div>
+<div id="panduan" class="balance"></div>
+<div class="alert">⚠️ Menampilkan data menu terakhir (<b id="tanggalData"></b>). Menu untuk hari ini (<b id="tanggalHariIni"></b>) belum diperbarui oleh Admin SPPG.</div>
+
+<section class="hero">
+<div class="badges"><span id="sppg" class="badge"></span><span id="porsi" class="badge blue"></span></div>
+<h1 id="menu"></h1><div class="date">📅 Tanggal: <span id="tanggalMenu"></span></div>
+<div class="scan">🌐 Waktu Pindai (Scan): <b>WIB</b> (Waktu Indonesia Barat)</div>
+</section>
+
+<section class="section">
+<h2>🔎 LOGISTIK &amp; DISTRIBUSI</h2>
+<div class="row"><span>🏭 Waktu Produksi:</span><span id="produksi" class="value"></span></div>
+<div class="row"><span>🚚 Waktu Pengiriman:</span><span id="pengiriman" class="value"></span></div>
+<div class="row blue"><span>👥 Penerima Manfaat:</span><span id="penerima" class="value"></span></div>
+<div class="flow"><b>Produksi</b><strong>→</strong><b>Pengiriman</b><strong>→</strong><b>Konsumsi</b></div>
+<div class="energy"><small>TOTAL ENERGI MAKANAN</small><strong id="total"></strong></div>
+</section>
+
+<section class="section security">
+<h2>🛡️ KEAMANAN PANGAN</h2>
+<div class="safe"><small>BATAS KONSUMSI AMAN</small><strong id="batas"></strong></div>
+<div class="safe-row"><span>⌛ Masa Aman:</span><b id="masa"></b></div>
+<div class="warn">⚠️ SEBAIKNYA SEGERA DIKONSUMSI</div><div class="warn red">⚠️ DILARANG DIBAWA PULANG</div>
+</section>
+
+<div class="nutri-title">KANDUNGAN GIZI (<span id="gPorsi"></span>)</div>
+<section style="padding:0;border:0;box-shadow:none" class="section">
+<div class="energy-big"><div><small>⚡ INPUT ENERGI &amp; TERSIMPAN</small><strong id="energi"></strong></div><div class="saved">🌱<br>ENERGI YANG TERSIMPAN</div></div>
+<div class="grid">
+<div class="box yellow"><h3>KARBOHIDRAT</h3><strong id="karbo"></strong></div>
+<div class="box pink"><h3>PROTEIN</h3><strong id="protein"></strong></div>
+<div class="box cyan"><h3>LEMAK</h3><strong id="lemak"></strong></div>
+<div class="box mint"><h3>SERAT PANGAN</h3><strong id="serat"></strong></div>
+</div><div class="end">💬 Batas akhir konsumsi</div>
+</section>
+
+<div class="portion-title">PILIH PORSI UNTUK MELIHAT NILAI GIZI POSTER:</div>
+<div class="portions">
+<button class="portion active" data-porsi="Porsi Besar">🍱 Porsi Besar</button>
+<button class="portion" data-porsi="Porsi Kecil">🥗 Porsi Kecil</button>
+<button class="portion" data-porsi="Porsi Bumil">🍼 Porsi Bumil</button>
+<button class="portion" data-porsi="Porsi Busui">🍼 Porsi Busui</button>
+<button class="portion" data-porsi="Porsi Balita">👶 Porsi Balita</button>
+</div>
+
+<div class="photo"><img id="foto" alt="Foto menu"><div id="placeholder" class="placeholder">📷<br><b>Tempat Foto Menu</b><br>Ganti file <b>foto-menu.jpg</b> dengan foto Anda.</div></div>
+
+<section class="contact">
+<div class="contact-top"><span class="pill">🛡️ LAYANAN TERBUKA</span><h2>Kontak &amp; Pengaduan SPPG</h2><p>Sampaikan keluhan, ketidaksesuaian rasa/porsi, atau masukan untuk SPPG. Transparansi demi makanan bergizi berkualitas.</p></div>
+<div class="contact-body">
+<h3>KANAL KONTAK &amp; MEDIA SOSIAL RESMI SPPG</h3>
+<div class="social"><a id="wa" href="#" target="_blank">💬<b>WhatsApp</b>Hubungi</a><a id="ig" href="#" target="_blank">◎<b>Instagram</b>Profil</a><a id="tt" href="#" target="_blank">◉<b>TikTok</b>Profil</a><a id="fb" href="#" target="_blank">f<b>Facebook</b>Profil</a></div>
+<div class="topics"><button class="topic active">🍲 Kualitas &amp; Rasa</button><button class="topic">🧼 Kebersihan &amp; Higienitas</button><button class="topic">⏱️ Waktu Distribusi</button><button class="topic">🍱 Porsi / Menu Tidak Sesuai</button><button class="topic">💡 Saran &amp; Aspirasi</button></div>
+<div class="formgrid"><div class="field"><label>Nama Anda (Opsional / Anonim):</label><input id="nama" placeholder="Contoh: Budi / Siswa"></div><div class="field"><label>No. WhatsApp / HP (Opsional):</label><input id="hp" placeholder="Contoh: 081234567890"></div></div>
+<div class="field"><label>Uraian Keluhan, Kendala, atau Masukan: *</label><textarea id="keluhan" placeholder="Jelaskan secara ringkas kendala menu makanan atau pelayanan SPPG hari ini..."></textarea></div>
+<div class="actions"><button class="wa" onclick="kirimWA()">💬 Kirim via WhatsApp Langsung</button><button class="digital" onclick="alert('Bagian ini bisa dihubungkan ke Google Form/database.')">➤ Kirim ke Kotak Digital</button></div>
+</div></section>
+
+<div class="qr">▦ &nbsp; Pindai QR Code Lain</div>
+
 <!-- ADMIN -->
 <button class="admin-open" onclick="bukaAdmin()">🔐 EDIT MENU / ADMIN</button>
 
