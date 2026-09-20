@@ -1,24 +1,289 @@
-<!DOCTYPE html>
-<html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin Menu MBG</title><style>
-*{box-sizing:border-box}body{font-family:Arial;margin:0;background:#f2f7f2}.wrap{max-width:650px;margin:auto;padding:18px}
-.card{background:white;border-radius:18px;padding:18px;box-shadow:0 4px 16px #0001}input{width:100%;padding:12px;border:1px solid #ddd;border-radius:9px;margin:6px 0 12px;font-size:16px}
-button{border:0;border-radius:10px;padding:12px 16px;background:#2e7d32;color:#fff;font-weight:bold;margin:4px;cursor:pointer}.del{background:#c62828}.back{background:#555}
-.item{border:1px solid #eee;border-radius:12px;padding:12px;margin:10px 0}h1{color:#2e7d32}
-</style></head><body><div class="wrap"><div class="card"><h1>⚙️ Admin Menu MBG</h1>
-<p>Ganti menu di bawah, lalu tekan <b>Simpan Menu</b>.</p>
-<label>Tanggal</label><input id="tanggal" placeholder="Contoh: Senin, 21 September 2026">
-<div id="items"></div><button onclick="add()">＋ Tambah Menu</button><button onclick="save()">💾 Simpan Menu</button><button class="back" onclick="location.href='index.html'">👁️ Lihat Menu</button>
-<p id="msg"></p></div></div>
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Menu MBG - SPPG</title>
+<style>
+:root{--navy:#111a2f;--blue:#1769e0;--yellow:#ffd21a;--green:#08ae80;--red:#ed173d;--orange:#ff7900;--bg:#f3f7fb;--line:#dce6ef;--text:#26364a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Arial,sans-serif;color:var(--text)}
+.wrap{max-width:760px;margin:auto;background:#fff;min-height:100vh;padding:20px 26px 35px}
+.center{text-align:center}.logo{width:82px;height:82px;border-radius:50%;object-fit:cover;border:5px solid white;box-shadow:0 2px 15px #56708055}
+.instansi{color:#23478f;font-size:20px;font-weight:800;letter-spacing:1.5px;margin-top:9px}.negara{color:#2864d2;font-weight:700;margin-top:4px}
+.balance{margin:20px auto 10px;background:#fff5c9;border:3px solid #ffc928;border-radius:25px;padding:12px;font-size:20px;font-weight:800;color:#773b09}
+.alert{background:#fffdf1;border:1px solid #efd16a;border-radius:16px;padding:12px;text-align:center;font-size:13px;color:#71430c}
+.hero{background:var(--navy);color:white;border-radius:24px;padding:21px 18px;margin:20px 0;text-align:center}.badges{display:flex;gap:7px;justify-content:center;flex-wrap:wrap}.badge{background:var(--yellow);color:#111;border-radius:20px;padding:7px 13px;font-size:12px;font-weight:800}.badge.blue{background:#2877df;color:white}
+.hero h1{color:#ffe00a;font-size:25px;line-height:1.3;margin:10px 0}.hero .date{color:#c9d2e2;font-size:14px}.scan{display:inline-block;background:#0c234f;border:1px solid #2450b9;border-radius:20px;padding:8px 13px;margin-top:10px;font-size:12px}
+.section{background:#fff;border:2px solid var(--line);border-radius:22px;padding:17px;margin:18px 0;box-shadow:0 8px 28px #23405b18}.section h2{font-size:18px;margin:0 0 12px;padding-bottom:12px;border-bottom:2px solid var(--line)}
+.row{display:flex;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:14px;padding:12px;margin:9px 0;font-size:14px}.row.blue{background:#f0f8ff;border-color:#c8def5}.value{background:#f0f4f8;border-radius:8px;padding:6px 10px;font-weight:800;white-space:nowrap}
+.flow{display:flex;justify-content:space-between;align-items:center;background:#edf1f6;border-radius:14px;padding:10px;font-size:12px}.flow b{background:white;border-radius:7px;padding:6px 9px;font-weight:500}
+.energy{text-align:center;background:#fff9eb;border:1px solid #f0dfb1;border-radius:15px;padding:12px;margin-top:13px}.energy small{display:block;color:#8b4d0c;font-weight:800}.energy strong{font-size:22px;color:#3b2412}
+.security{border-color:#ffc9ce;background:#fffafa}.security h2{color:#591b1e;border-color:#f1c4c8}.safe{text-align:center;border:1px solid #efd4d5;border-radius:15px;padding:15px}.safe small{color:#ba1d27;font-weight:800;letter-spacing:1px}.safe strong{display:block;color:#df1e28;font-size:27px;margin-top:7px}.safe-row{display:flex;justify-content:space-between;background:#fffbea;border:1px solid #efd77e;border-radius:12px;padding:11px;margin-top:10px;font-size:13px}.warn{background:#ffbd08;border-radius:13px;text-align:center;padding:12px;margin-top:10px;font-weight:800}.warn.red{background:#ff7600;color:white}
+.nutri-title{text-align:center;background:#fff5ca;border:1px solid #f0d14c;border-radius:30px;padding:8px 16px;width:max-content;max-width:100%;margin:25px auto 10px;font-weight:800;color:#5d3515}
+.energy-big{background:linear-gradient(135deg,#05a879,#0bbf91);color:#fff;border-radius:19px;padding:16px;display:flex;justify-content:space-between;align-items:center;gap:12px}.energy-big small{font-size:12px;font-weight:800;letter-spacing:1px}.energy-big strong{display:block;font-size:36px;margin-top:4px}.saved{background:#ffffff22;border:1px solid #ffffff55;border-radius:14px;padding:13px;text-align:center;font-weight:800;font-size:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:12px}.box{border:2px solid var(--line);border-radius:18px;padding:14px;min-height:100px}.box h3{font-size:13px;margin:0}.box strong{font-size:28px;display:block;margin-top:9px}.yellow{background:#fffdf3;border-color:#ffe27c}.pink{background:#fff7f8;border-color:#ffc6cc}.cyan{background:#f4fdff;border-color:#a5ecf3}.mint{background:#f5fff9;border-color:#a7ebcc}.end{text-align:center;background:#f0f3f7;border-radius:13px;padding:11px;margin-top:12px;font-size:13px}
+.portion-title{text-align:center;color:#8b9aad;font-size:13px;letter-spacing:1px;font-weight:800;margin:25px 0 10px}.portions{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.portion{border:0;background:#edf2f7;border-radius:13px;padding:10px 4px;font-size:11px;font-weight:700;color:#33465b}.portion.active{background:#2069e6;color:#fff}
+.photo{min-height:220px;background:#edf5fa;border-radius:19px;margin-top:15px;display:grid;place-items:center;overflow:hidden}.photo img{width:100%;height:100%;max-height:330px;object-fit:cover}.placeholder{text-align:center;color:#8ca0b0;padding:60px 15px}
+.contact{border:1px solid #ff9b18;border-radius:23px;overflow:hidden;margin-top:24px}.contact-top{background:linear-gradient(105deg,#ed0730,#f20a45,#ef7d00);color:white;padding:20px 22px}.pill{background:#ffffff30;border-radius:20px;padding:7px 12px;font-size:12px;font-weight:800}.contact-top h2{font-size:22px;margin:10px 0}.contact-top p{font-size:14px;line-height:1.5;margin:0}.contact-body{padding:19px 22px}.contact-body h3{font-size:15px;color:#60738a;margin:0 0 12px}.social{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.social a{background:#f2f6fa;border:1px dashed #d4e0ea;border-radius:16px;padding:12px 5px;text-align:center;color:#62768a;font-size:11px;text-decoration:none}.social b{display:block;margin-top:5px}.topics{display:flex;gap:7px;flex-wrap:wrap;margin:18px 0}.topic{border:0;background:#eef2f7;border-radius:20px;padding:10px 12px;font-size:12px;font-weight:700;color:#3c5065}.topic.active{background:#ed1747;color:white}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{margin-top:10px}.field label{display:block;font-size:12px;font-weight:700;margin-bottom:6px}.field input,.field textarea{width:100%;border:1px solid #d4dee7;border-radius:13px;padding:12px;outline:0}.field textarea{min-height:105px}.actions{display:flex;gap:10px;margin-top:13px}.actions button{flex:1;border:0;border-radius:14px;padding:13px;font-weight:800}.wa{background:#08a66e;color:white}.digital{background:#eef2f7;color:#33475b}.qr{background:#111a2f;color:white;border-radius:17px;text-align:center;padding:17px;margin-top:22px;font-size:18px;font-weight:800}.footer{text-align:center;color:#718399;font-size:11px;line-height:1.6;padding:23px 5px 0}
+@media(max-width:600px){.wrap{padding:17px 13px 30px}.hero h1{font-size:21px}.section{padding:15px}.portions{grid-template-columns:1fr 1fr}.social{grid-template-columns:1fr 1fr}.formgrid{grid-template-columns:1fr}.actions{flex-direction:column}.energy-big strong{font-size:30px}}
+
+/* ADMIN EDITOR */
+.admin-open{width:100%;margin:22px 0 0;padding:15px;border:0;border-radius:15px;background:#111a2f;color:white;font-size:16px;font-weight:bold}
+.admin-overlay{display:none;position:fixed;inset:0;z-index:99999;background:#07101dcc;overflow:auto;padding:12px}
+.admin-box{max-width:720px;margin:15px auto;background:#fff;border-radius:22px;padding:18px;box-shadow:0 20px 60px #0006}
+.admin-head{display:flex;justify-content:space-between;align-items:center}
+.admin-title{font-size:22px;font-weight:800;color:#111a2f}
+.admin-close{border:0;border-radius:50%;width:40px;height:40px;font-size:18px}
+.admin-note{background:#eef7ff;border:1px solid #c8e0f7;border-radius:13px;padding:12px;margin:13px 0;font-size:13px}
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.admin-grid label{font-size:12px;font-weight:bold}
+.admin-grid input{width:100%;margin-top:5px;padding:11px;border:1px solid #d3dee8;border-radius:10px}
+.admin-title2{font-size:16px;font-weight:bold;color:#213d68;margin:20px 0 9px}
+.admin-portion{border:1px solid #dce6ef;border-radius:15px;padding:12px;margin:9px 0}
+.admin-portion h3{font-size:14px;margin:0 0 10px}
+.admin-photo{border:2px dashed #cbd9e6;border-radius:14px;padding:15px;text-align:center}
+.admin-photo input{margin-top:8px;width:100%}
+.admin-preview{width:100%;max-height:220px;object-fit:cover;border-radius:14px;margin-top:10px;display:none}
+.admin-actions{display:flex;gap:9px;margin-top:18px}
+.admin-actions button{flex:1;border:0;border-radius:13px;padding:13px;font-weight:bold}
+.admin-save{background:#08a66e;color:white}
+.admin-reset{background:#eef2f7;color:#33475b}
+.admin-status{text-align:center;font-size:13px;font-weight:bold;margin-top:10px}
+@media(max-width:600px){.admin-grid{grid-template-columns:1fr}.admin-actions{flex-direction:column}}
+
+</style>
+</head>
+<body><main class="wrap">
+
 <script>
-const def={tanggal:"",menu:[{name:"Nasi Putih",desc:"Porsi sesuai ketentuan",harga:""},{name:"Lauk Utama",desc:"Menu lauk hari ini",harga:""},{name:"Sayur",desc:"Sayuran segar",harga:""},{name:"Buah",desc:"Buah sesuai menu",harga:""}]};
-let d;try{d=JSON.parse(localStorage.getItem("menuMBG"))||def}catch(e){d=def}
-tanggal.value=d.tanggal||"";let arr=d.menu||[];
-function render(){items.innerHTML=arr.map((x,i)=>`<div class="item"><b>Menu ${i+1}</b><label>Nama Menu</label><input data-k="name" data-i="${i}" value="${a(x.name)}"><label>Keterangan</label><input data-k="desc" data-i="${i}" value="${a(x.desc)}"><label>Harga (opsional)</label><input data-k="harga" data-i="${i}" value="${a(x.harga)}"><button class="del" onclick="remove(${i})">Hapus</button></div>`).join("")}
-function sync(){document.querySelectorAll("[data-i]").forEach(e=>arr[e.dataset.i][e.dataset.k]=e.value);d.tanggal=tanggal.value}
-function add(){sync();arr.push({name:"Menu Baru",desc:"",harga:""});render()}
-function remove(i){sync();arr.splice(i,1);render()}
-function save(){sync();localStorage.setItem("menuMBG",JSON.stringify(d));msg.textContent="✅ Menu tersimpan di perangkat ini.";setTimeout(()=>msg.textContent="",2500)}
-function a(s){return String(s||"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;")}
-render();
-</script></body></html>
+/* ===================== EDIT BAGIAN INI SAJA ===================== */
+const DATA={
+ logo:"logo-bgn.png",
+ instansi:"BADAN GIZI NASIONAL",
+ negara:"REPUBLIK INDONESIA",
+ judulPanduan:"PANDUAN GIZI SEIMBANG",
+ tanggalData:"2026-09-18",
+ tanggalHariIni:"2026-09-20",
+ sppg:"SPPG NGANJUK LOCERET CANDIREJO",
+ yayasan:"YAYASAN DARUL FALAH BARON",
+ menu:"Nasi Putih + Sempol Ayam Saus Bangkok + Tahu Kremes + Mix Vege + Buah Anggur",
+ tanggalMenu:"2026-09-18",
+ porsi:"PORSI BESAR",
+ waktuProduksi:"06:00 WIB",
+ waktuPengiriman:"07:30 WIB",
+ penerima:"2271 Siswa",
+ totalEnergi:"652.8 Kcal",
+ batasKonsumsi:"maksimal Pukul 10.45 WIB",
+ masaAman:"4 Jam setelah diproduksi",
+ gizi:{
+  "Porsi Besar": {energi:"652.8 Kcal",karbohidrat:"93.7 g",protein:"29.9 g",lemak:"18.9 g",serat:"1 g"},
+  "Porsi Kecil": {energi:"— Kcal",karbohidrat:"— g",protein:"— g",lemak:"— g",serat:"— g"},
+  "Porsi Bumil": {energi:"— Kcal",karbohidrat:"— g",protein:"— g",lemak:"— g",serat:"— g"},
+  "Porsi Busui": {energi:"— Kcal",karbohidrat:"— g",protein:"— g",lemak:"— g",serat:"— g"},
+  "Porsi Balita": {energi:"— Kcal",karbohidrat:"— g",protein:"— g",lemak:"— g",serat:"— g"}
+ },
+ foto:"foto-menu.jpg",
+ whatsapp:"",
+ instagram:"",
+ tiktok:"",
+ facebook:""
+};
+/* ================================================================ */
+function $(id){return document.getElementById(id)}
+function text(id,v){$(id).textContent=v}
+function init(){
+ $("logo").src=DATA.logo;
+ $("logo").onerror=()=>{$("logo").style.display="none"};
+ text("instansi",DATA.instansi);text("negara",DATA.negara);text("panduan",DATA.judulPanduan);
+ text("tanggalData",DATA.tanggalData);text("tanggalHariIni",DATA.tanggalHariIni);
+ text("sppg",DATA.sppg);text("porsi",DATA.porsi);text("menu",DATA.menu);text("tanggalMenu",DATA.tanggalMenu);
+ text("produksi",DATA.waktuProduksi);text("pengiriman",DATA.waktuPengiriman);text("penerima",DATA.penerima);text("total",DATA.totalEnergi);
+ text("batas",DATA.batasKonsumsi);text("masa",DATA.masaAman);
+ setPorsi(DATA.porsi);
+ $("foto").src=DATA.foto;$("foto").onload=()=>{$("foto").style.display="block";$("placeholder").style.display="none"};
+ $("wa").href=DATA.whatsapp||"#";$("ig").href=DATA.instagram||"#";$("tt").href=DATA.tiktok||"#";$("fb").href=DATA.facebook||"#";
+}
+function setPorsi(namaPorsi){
+ const g=DATA.gizi[namaPorsi]||DATA.gizi["Porsi Besar"];
+ text("porsi",namaPorsi.toUpperCase());
+ text("gPorsi",namaPorsi.toUpperCase());
+ text("energi",g.energi); text("karbo",g.karbohidrat);
+ text("protein",g.protein); text("lemak",g.lemak); text("serat",g.serat);
+ document.querySelectorAll(".portion").forEach(b=>b.classList.toggle("active",b.dataset.porsi===namaPorsi));
+}
+function kirimWA(){if(!DATA.whatsapp){alert("Masukkan nomor WhatsApp pada DATA.whatsapp terlebih dahulu.");return}let nomor=DATA.whatsapp.replace(/\D/g,"");let msg=encodeURIComponent("Pengaduan SPPG "+DATA.sppg+"\nNama: "+$("nama").value+"\nHP: "+$("hp").value+"\nKeluhan: "+$("keluhan").value);window.open("https://wa.me/"+nomor+"?text="+msg,"_blank")}
+document.addEventListener("DOMContentLoaded",init);
+</script>
+
+<div class="center">
+<img id="logo" class="logo" alt="Logo">
+<div id="instansi" class="instansi"></div><div id="negara" class="negara"></div>
+</div>
+<div id="panduan" class="balance"></div>
+<div class="alert">⚠️ Menampilkan data menu terakhir (<b id="tanggalData"></b>). Menu untuk hari ini (<b id="tanggalHariIni"></b>) belum diperbarui oleh Admin SPPG.</div>
+
+<section class="hero">
+<div class="badges"><span id="sppg" class="badge"></span><span id="porsi" class="badge blue"></span></div>
+<h1 id="menu"></h1><div class="date">📅 Tanggal: <span id="tanggalMenu"></span></div>
+<div class="scan">🌐 Waktu Pindai (Scan): <b>WIB</b> (Waktu Indonesia Barat)</div>
+</section>
+
+<section class="section">
+<h2>🔎 LOGISTIK &amp; DISTRIBUSI</h2>
+<div class="row"><span>🏭 Waktu Produksi:</span><span id="produksi" class="value"></span></div>
+<div class="row"><span>🚚 Waktu Pengiriman:</span><span id="pengiriman" class="value"></span></div>
+<div class="row blue"><span>👥 Penerima Manfaat:</span><span id="penerima" class="value"></span></div>
+<div class="flow"><b>Produksi</b><strong>→</strong><b>Pengiriman</b><strong>→</strong><b>Konsumsi</b></div>
+<div class="energy"><small>TOTAL ENERGI MAKANAN</small><strong id="total"></strong></div>
+</section>
+
+<section class="section security">
+<h2>🛡️ KEAMANAN PANGAN</h2>
+<div class="safe"><small>BATAS KONSUMSI AMAN</small><strong id="batas"></strong></div>
+<div class="safe-row"><span>⌛ Masa Aman:</span><b id="masa"></b></div>
+<div class="warn">⚠️ SEBAIKNYA SEGERA DIKONSUMSI</div><div class="warn red">⚠️ DILARANG DIBAWA PULANG</div>
+</section>
+
+<div class="nutri-title">KANDUNGAN GIZI (<span id="gPorsi"></span>)</div>
+<section style="padding:0;border:0;box-shadow:none" class="section">
+<div class="energy-big"><div><small>⚡ INPUT ENERGI &amp; TERSIMPAN</small><strong id="energi"></strong></div><div class="saved">🌱<br>ENERGI YANG TERSIMPAN</div></div>
+<div class="grid">
+<div class="box yellow"><h3>KARBOHIDRAT</h3><strong id="karbo"></strong></div>
+<div class="box pink"><h3>PROTEIN</h3><strong id="protein"></strong></div>
+<div class="box cyan"><h3>LEMAK</h3><strong id="lemak"></strong></div>
+<div class="box mint"><h3>SERAT PANGAN</h3><strong id="serat"></strong></div>
+</div><div class="end">💬 Batas akhir konsumsi</div>
+</section>
+
+<div class="portion-title">PILIH PORSI UNTUK MELIHAT NILAI GIZI POSTER:</div>
+<div class="portions">
+<button class="portion active" data-porsi="Porsi Besar">🍱 Porsi Besar</button>
+<button class="portion" data-porsi="Porsi Kecil">🥗 Porsi Kecil</button>
+<button class="portion" data-porsi="Porsi Bumil">🍼 Porsi Bumil</button>
+<button class="portion" data-porsi="Porsi Busui">🍼 Porsi Busui</button>
+<button class="portion" data-porsi="Porsi Balita">👶 Porsi Balita</button>
+</div>
+
+<div class="photo"><img id="foto" alt="Foto menu"><div id="placeholder" class="placeholder">📷<br><b>Tempat Foto Menu</b><br>Ganti file <b>foto-menu.jpg</b> dengan foto Anda.</div></div>
+
+<section class="contact">
+<div class="contact-top"><span class="pill">🛡️ LAYANAN TERBUKA</span><h2>Kontak &amp; Pengaduan SPPG</h2><p>Sampaikan keluhan, ketidaksesuaian rasa/porsi, atau masukan untuk SPPG. Transparansi demi makanan bergizi berkualitas.</p></div>
+<div class="contact-body">
+<h3>KANAL KONTAK &amp; MEDIA SOSIAL RESMI SPPG</h3>
+<div class="social"><a id="wa" href="#" target="_blank">💬<b>WhatsApp</b>Hubungi</a><a id="ig" href="#" target="_blank">◎<b>Instagram</b>Profil</a><a id="tt" href="#" target="_blank">◉<b>TikTok</b>Profil</a><a id="fb" href="#" target="_blank">f<b>Facebook</b>Profil</a></div>
+<div class="topics"><button class="topic active">🍲 Kualitas &amp; Rasa</button><button class="topic">🧼 Kebersihan &amp; Higienitas</button><button class="topic">⏱️ Waktu Distribusi</button><button class="topic">🍱 Porsi / Menu Tidak Sesuai</button><button class="topic">💡 Saran &amp; Aspirasi</button></div>
+<div class="formgrid"><div class="field"><label>Nama Anda (Opsional / Anonim):</label><input id="nama" placeholder="Contoh: Budi / Siswa"></div><div class="field"><label>No. WhatsApp / HP (Opsional):</label><input id="hp" placeholder="Contoh: 081234567890"></div></div>
+<div class="field"><label>Uraian Keluhan, Kendala, atau Masukan: *</label><textarea id="keluhan" placeholder="Jelaskan secara ringkas kendala menu makanan atau pelayanan SPPG hari ini..."></textarea></div>
+<div class="actions"><button class="wa" onclick="kirimWA()">💬 Kirim via WhatsApp Langsung</button><button class="digital" onclick="alert('Bagian ini bisa dihubungkan ke Google Form/database.')">➤ Kirim ke Kotak Digital</button></div>
+</div></section>
+
+<div class="qr">▦ &nbsp; Pindai QR Code Lain</div>
+
+<!-- ADMIN -->
+<button class="admin-open" onclick="bukaAdmin()">🔐 EDIT MENU / ADMIN</button>
+
+<div id="adminPanel" class="admin-overlay">
+<div class="admin-box">
+
+<div class="admin-head">
+<div>
+<div class="admin-title">⚙️ Admin / Edit Menu</div>
+<div style="font-size:12px;color:#718399">Edit langsung dari HP</div>
+</div>
+<button class="admin-close" onclick="tutupAdmin()">✕</button>
+</div>
+
+<div class="admin-note">
+💡 Setelah mengubah data, tekan <b>Simpan Perubahan</b>. Data akan tersimpan di browser ini.
+</div>
+
+<div class="admin-grid">
+<label>Nama SPPG<input id="edSppg"></label>
+<label>Nama Yayasan<input id="edYayasan"></label>
+<label>Nama Menu<input id="edMenu"></label>
+<label>Tanggal<input id="edTanggal" type="date"></label>
+<label>Waktu Produksi<input id="edProduksi"></label>
+<label>Waktu Pengiriman<input id="edPengiriman"></label>
+<label>Penerima Manfaat<input id="edPenerima"></label>
+<label>Batas Konsumsi<input id="edBatas"></label>
+<label>Masa Aman<input id="edMasa"></label>
+</div>
+
+<div class="admin-title2">📊 Nilai Gizi</div>
+
+<div class="admin-portion">
+<h3>🍱 Porsi Besar</h3>
+<div class="admin-grid">
+<label>Energi<input id="besarEnergi"></label>
+<label>Karbohidrat<input id="besarKarbo"></label>
+<label>Protein<input id="besarProtein"></label>
+<label>Lemak<input id="besarLemak"></label>
+<label>Serat<input id="besarSerat"></label>
+</div>
+</div>
+
+<div class="admin-portion">
+<h3>🥗 Porsi Kecil</h3>
+<div class="admin-grid">
+<label>Energi<input id="kecilEnergi"></label>
+<label>Karbohidrat<input id="kecilKarbo"></label>
+<label>Protein<input id="kecilProtein"></label>
+<label>Lemak<input id="kecilLemak"></label>
+<label>Serat<input id="kecilSerat"></label>
+</div>
+</div>
+
+<div class="admin-portion">
+<h3>🍼 Porsi Bumil</h3>
+<div class="admin-grid">
+<label>Energi<input id="bumilEnergi"></label>
+<label>Karbohidrat<input id="bumilKarbo"></label>
+<label>Protein<input id="bumilProtein"></label>
+<label>Lemak<input id="bumilLemak"></label>
+<label>Serat<input id="bumilSerat"></label>
+</div>
+</div>
+
+<div class="admin-portion">
+<h3>🍼 Porsi Busui</h3>
+<div class="admin-grid">
+<label>Energi<input id="busuiEnergi"></label>
+<label>Karbohidrat<input id="busuiKarbo"></label>
+<label>Protein<input id="busuiProtein"></label>
+<label>Lemak<input id="busuiLemak"></label>
+<label>Serat<input id="busuiSerat"></label>
+</div>
+</div>
+
+<div class="admin-portion">
+<h3>👶 Porsi Balita</h3>
+<div class="admin-grid">
+<label>Energi<input id="balitaEnergi"></label>
+<label>Karbohidrat<input id="balitaKarbo"></label>
+<label>Protein<input id="balitaProtein"></label>
+<label>Lemak<input id="balitaLemak"></label>
+<label>Serat<input id="balitaSerat"></label>
+</div>
+</div>
+
+<div class="admin-title2">📷 Foto Menu</div>
+<div class="admin-photo">
+Pilih foto dari HP
+<input id="edFoto" type="file" accept="image/*">
+<img id="edPreview" class="admin-preview">
+</div>
+
+<div class="admin-actions">
+<button class="admin-save" onclick="simpanAdmin()">💾 SIMPAN PERUBAHAN</button>
+<button class="admin-reset" onclick="resetAdmin()">↩️ RESET</button>
+</div>
+
+<div id="edStatus" class="admin-status"></div>
+
+</div>
+</div>
+
+<div class="footer">SPPG Nganjuk Loceret Candirejo — <b>Yayasan Darul Falah Baron</b><br>Semua tulisan, foto, angka gizi, dan kontak dapat diedit di bagian <b>DATA</b> pada file HTML.</div>
+</main>
+<script>
+document.querySelectorAll(".portion").forEach(b=>b.oncl
