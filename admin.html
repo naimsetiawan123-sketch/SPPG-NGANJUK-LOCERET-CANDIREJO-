@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Menu MBG</title><style>
+*{box-sizing:border-box}body{font-family:Arial;margin:0;background:#f2f7f2}.wrap{max-width:650px;margin:auto;padding:18px}
+.card{background:white;border-radius:18px;padding:18px;box-shadow:0 4px 16px #0001}input{width:100%;padding:12px;border:1px solid #ddd;border-radius:9px;margin:6px 0 12px;font-size:16px}
+button{border:0;border-radius:10px;padding:12px 16px;background:#2e7d32;color:#fff;font-weight:bold;margin:4px;cursor:pointer}.del{background:#c62828}.back{background:#555}
+.item{border:1px solid #eee;border-radius:12px;padding:12px;margin:10px 0}h1{color:#2e7d32}
+</style></head><body><div class="wrap"><div class="card"><h1>⚙️ Admin Menu MBG</h1>
+<p>Ganti menu di bawah, lalu tekan <b>Simpan Menu</b>.</p>
+<label>Tanggal</label><input id="tanggal" placeholder="Contoh: Senin, 21 September 2026">
+<div id="items"></div><button onclick="add()">＋ Tambah Menu</button><button onclick="save()">💾 Simpan Menu</button><button class="back" onclick="location.href='index.html'">👁️ Lihat Menu</button>
+<p id="msg"></p></div></div>
+<script>
+const def={tanggal:"",menu:[{name:"Nasi Putih",desc:"Porsi sesuai ketentuan",harga:""},{name:"Lauk Utama",desc:"Menu lauk hari ini",harga:""},{name:"Sayur",desc:"Sayuran segar",harga:""},{name:"Buah",desc:"Buah sesuai menu",harga:""}]};
+let d;try{d=JSON.parse(localStorage.getItem("menuMBG"))||def}catch(e){d=def}
+tanggal.value=d.tanggal||"";let arr=d.menu||[];
+function render(){items.innerHTML=arr.map((x,i)=>`<div class="item"><b>Menu ${i+1}</b><label>Nama Menu</label><input data-k="name" data-i="${i}" value="${a(x.name)}"><label>Keterangan</label><input data-k="desc" data-i="${i}" value="${a(x.desc)}"><label>Harga (opsional)</label><input data-k="harga" data-i="${i}" value="${a(x.harga)}"><button class="del" onclick="remove(${i})">Hapus</button></div>`).join("")}
+function sync(){document.querySelectorAll("[data-i]").forEach(e=>arr[e.dataset.i][e.dataset.k]=e.value);d.tanggal=tanggal.value}
+function add(){sync();arr.push({name:"Menu Baru",desc:"",harga:""});render()}
+function remove(i){sync();arr.splice(i,1);render()}
+function save(){sync();localStorage.setItem("menuMBG",JSON.stringify(d));msg.textContent="✅ Menu tersimpan di perangkat ini.";setTimeout(()=>msg.textContent="",2500)}
+function a(s){return String(s||"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;")}
+render();
+</script></body></html>
