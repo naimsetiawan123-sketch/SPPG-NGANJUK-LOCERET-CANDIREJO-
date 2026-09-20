@@ -179,6 +179,173 @@ document.addEventListener("DOMContentLoaded",init);
 
 <div class="qr">▦ &nbsp; Pindai QR Code Lain</div>
 
+
+<!-- ADMIN / EDIT MENU -->
+<button id="openAdminBtn" class="admin-open" type="button">🔐 EDIT MENU / ADMIN</button>
+
+<div id="adminPanel" class="admin-overlay" aria-hidden="true">
+  <div class="admin-box">
+    <div class="admin-head">
+      <div>
+        <div class="admin-title">⚙️ Admin / Edit Menu</div>
+        <div class="admin-sub">Edit menu langsung dari HP</div>
+      </div>
+      <button id="closeAdminBtn" class="admin-close" type="button">✕</button>
+    </div>
+
+    <div class="admin-note">
+      💡 Ubah data yang diperlukan, lalu tekan <b>💾 SIMPAN PERUBAHAN</b>.
+    </div>
+
+    <div class="admin-grid">
+      <label>Nama SPPG<input id="edSppg"></label>
+      <label>Nama Yayasan<input id="edYayasan"></label>
+      <label>Nama Menu<input id="edMenu"></label>
+      <label>Tanggal<input id="edTanggal" type="date"></label>
+      <label>Waktu Produksi<input id="edProduksi"></label>
+      <label>Waktu Pengiriman<input id="edPengiriman"></label>
+      <label>Penerima Manfaat<input id="edPenerima"></label>
+      <label>Batas Konsumsi<input id="edBatas"></label>
+      <label>Masa Aman<input id="edMasa"></label>
+    </div>
+
+    <div class="admin-title2">📊 Nilai Gizi Per Porsi</div>
+
+    <div class="admin-portion"><h3>🍱 Porsi Besar</h3><div class="admin-grid">
+      <label>Energi<input id="besarEnergi"></label><label>Karbohidrat<input id="besarKarbo"></label>
+      <label>Protein<input id="besarProtein"></label><label>Lemak<input id="besarLemak"></label><label>Serat<input id="besarSerat"></label>
+    </div></div>
+
+    <div class="admin-portion"><h3>🥗 Porsi Kecil</h3><div class="admin-grid">
+      <label>Energi<input id="kecilEnergi"></label><label>Karbohidrat<input id="kecilKarbo"></label>
+      <label>Protein<input id="kecilProtein"></label><label>Lemak<input id="kecilLemak"></label><label>Serat<input id="kecilSerat"></label>
+    </div></div>
+
+    <div class="admin-portion"><h3>🍼 Porsi Bumil</h3><div class="admin-grid">
+      <label>Energi<input id="bumilEnergi"></label><label>Karbohidrat<input id="bumilKarbo"></label>
+      <label>Protein<input id="bumilProtein"></label><label>Lemak<input id="bumilLemak"></label><label>Serat<input id="bumilSerat"></label>
+    </div></div>
+
+    <div class="admin-portion"><h3>🍼 Porsi Busui</h3><div class="admin-grid">
+      <label>Energi<input id="busuiEnergi"></label><label>Karbohidrat<input id="busuiKarbo"></label>
+      <label>Protein<input id="busuiProtein"></label><label>Lemak<input id="busuiLemak"></label><label>Serat<input id="busuiSerat"></label>
+    </div></div>
+
+    <div class="admin-portion"><h3>👶 Porsi Balita</h3><div class="admin-grid">
+      <label>Energi<input id="balitaEnergi"></label><label>Karbohidrat<input id="balitaKarbo"></label>
+      <label>Protein<input id="balitaProtein"></label><label>Lemak<input id="balitaLemak"></label><label>Serat<input id="balitaSerat"></label>
+    </div></div>
+
+    <div class="admin-title2">📷 Foto Menu</div>
+    <div class="admin-photo">
+      Pilih foto dari HP
+      <input id="edFoto" type="file" accept="image/*">
+      <img id="edPreview" class="admin-preview" alt="Preview foto">
+    </div>
+
+    <div class="admin-actions">
+      <button id="saveAdminBtn" class="admin-save" type="button">💾 SIMPAN PERUBAHAN</button>
+      <button id="resetAdminBtn" class="admin-reset" type="button">↩️ RESET</button>
+    </div>
+    <div id="edStatus""— g",serat:"— g"}
+ },
+ foto:"foto-menu.jpg",
+ whatsapp:"",
+ instagram:"",
+ tiktok:"",
+ facebook:""
+};
+/* ================================================================ */
+function $(id){return document.getElementById(id)}
+function text(id,v){$(id).textContent=v}
+function init(){
+ $("logo").src=DATA.logo;
+ $("logo").onerror=()=>{$("logo").style.display="none"};
+ text("instansi",DATA.instansi);text("negara",DATA.negara);text("panduan",DATA.judulPanduan);
+ text("tanggalData",DATA.tanggalData);text("tanggalHariIni",DATA.tanggalHariIni);
+ text("sppg",DATA.sppg);text("porsi",DATA.porsi);text("menu",DATA.menu);text("tanggalMenu",DATA.tanggalMenu);
+ text("produksi",DATA.waktuProduksi);text("pengiriman",DATA.waktuPengiriman);text("penerima",DATA.penerima);text("total",DATA.totalEnergi);
+ text("batas",DATA.batasKonsumsi);text("masa",DATA.masaAman);
+ setPorsi(DATA.porsi);
+ $("foto").src=DATA.foto;$("foto").onload=()=>{$("foto").style.display="block";$("placeholder").style.display="none"};
+ $("wa").href=DATA.whatsapp||"#";$("ig").href=DATA.instagram||"#";$("tt").href=DATA.tiktok||"#";$("fb").href=DATA.facebook||"#";
+}
+function setPorsi(namaPorsi){
+ const g=DATA.gizi[namaPorsi]||DATA.gizi["Porsi Besar"];
+ text("porsi",namaPorsi.toUpperCase());
+ text("gPorsi",namaPorsi.toUpperCase());
+ text("energi",g.energi); text("karbo",g.karbohidrat);
+ text("protein",g.protein); text("lemak",g.lemak); text("serat",g.serat);
+ document.querySelectorAll(".portion").forEach(b=>b.classList.toggle("active",b.dataset.porsi===namaPorsi));
+}
+function kirimWA(){if(!DATA.whatsapp){alert("Masukkan nomor WhatsApp pada DATA.whatsapp terlebih dahulu.");return}let nomor=DATA.whatsapp.replace(/\D/g,"");let msg=encodeURIComponent("Pengaduan SPPG "+DATA.sppg+"\nNama: "+$("nama").value+"\nHP: "+$("hp").value+"\nKeluhan: "+$("keluhan").value);window.open("https://wa.me/"+nomor+"?text="+msg,"_blank")}
+document.addEventListener("DOMContentLoaded",init);
+</script>
+
+<div class="center">
+<img id="logo" class="logo" alt="Logo">
+<div id="instansi" class="instansi"></div><div id="negara" class="negara"></div>
+</div>
+<div id="panduan" class="balance"></div>
+<div class="alert">⚠️ Menampilkan data menu terakhir (<b id="tanggalData"></b>). Menu untuk hari ini (<b id="tanggalHariIni"></b>) belum diperbarui oleh Admin SPPG.</div>
+
+<section class="hero">
+<div class="badges"><span id="sppg" class="badge"></span><span id="porsi" class="badge blue"></span></div>
+<h1 id="menu"></h1><div class="date">📅 Tanggal: <span id="tanggalMenu"></span></div>
+<div class="scan">🌐 Waktu Pindai (Scan): <b>WIB</b> (Waktu Indonesia Barat)</div>
+</section>
+
+<section class="section">
+<h2>🔎 LOGISTIK &amp; DISTRIBUSI</h2>
+<div class="row"><span>🏭 Waktu Produksi:</span><span id="produksi" class="value"></span></div>
+<div class="row"><span>🚚 Waktu Pengiriman:</span><span id="pengiriman" class="value"></span></div>
+<div class="row blue"><span>👥 Penerima Manfaat:</span><span id="penerima" class="value"></span></div>
+<div class="flow"><b>Produksi</b><strong>→</strong><b>Pengiriman</b><strong>→</strong><b>Konsumsi</b></div>
+<div class="energy"><small>TOTAL ENERGI MAKANAN</small><strong id="total"></strong></div>
+</section>
+
+<section class="section security">
+<h2>🛡️ KEAMANAN PANGAN</h2>
+<div class="safe"><small>BATAS KONSUMSI AMAN</small><strong id="batas"></strong></div>
+<div class="safe-row"><span>⌛ Masa Aman:</span><b id="masa"></b></div>
+<div class="warn">⚠️ SEBAIKNYA SEGERA DIKONSUMSI</div><div class="warn red">⚠️ DILARANG DIBAWA PULANG</div>
+</section>
+
+<div class="nutri-title">KANDUNGAN GIZI (<span id="gPorsi"></span>)</div>
+<section style="padding:0;border:0;box-shadow:none" class="section">
+<div class="energy-big"><div><small>⚡ INPUT ENERGI &amp; TERSIMPAN</small><strong id="energi"></strong></div><div class="saved">🌱<br>ENERGI YANG TERSIMPAN</div></div>
+<div class="grid">
+<div class="box yellow"><h3>KARBOHIDRAT</h3><strong id="karbo"></strong></div>
+<div class="box pink"><h3>PROTEIN</h3><strong id="protein"></strong></div>
+<div class="box cyan"><h3>LEMAK</h3><strong id="lemak"></strong></div>
+<div class="box mint"><h3>SERAT PANGAN</h3><strong id="serat"></strong></div>
+</div><div class="end">💬 Batas akhir konsumsi</div>
+</section>
+
+<div class="portion-title">PILIH PORSI UNTUK MELIHAT NILAI GIZI POSTER:</div>
+<div class="portions">
+<button class="portion active" data-porsi="Porsi Besar">🍱 Porsi Besar</button>
+<button class="portion" data-porsi="Porsi Kecil">🥗 Porsi Kecil</button>
+<button class="portion" data-porsi="Porsi Bumil">🍼 Porsi Bumil</button>
+<button class="portion" data-porsi="Porsi Busui">🍼 Porsi Busui</button>
+<button class="portion" data-porsi="Porsi Balita">👶 Porsi Balita</button>
+</div>
+
+<div class="photo"><img id="foto" alt="Foto menu"><div id="placeholder" class="placeholder">📷<br><b>Tempat Foto Menu</b><br>Ganti file <b>foto-menu.jpg</b> dengan foto Anda.</div></div>
+
+<section class="contact">
+<div class="contact-top"><span class="pill">🛡️ LAYANAN TERBUKA</span><h2>Kontak &amp; Pengaduan SPPG</h2><p>Sampaikan keluhan, ketidaksesuaian rasa/porsi, atau masukan untuk SPPG. Transparansi demi makanan bergizi berkualitas.</p></div>
+<div class="contact-body">
+<h3>KANAL KONTAK &amp; MEDIA SOSIAL RESMI SPPG</h3>
+<div class="social"><a id="wa" href="#" target="_blank">💬<b>WhatsApp</b>Hubungi</a><a id="ig" href="#" target="_blank">◎<b>Instagram</b>Profil</a><a id="tt" href="#" target="_blank">◉<b>TikTok</b>Profil</a><a id="fb" href="#" target="_blank">f<b>Facebook</b>Profil</a></div>
+<div class="topics"><button class="topic active">🍲 Kualitas &amp; Rasa</button><button class="topic">🧼 Kebersihan &amp; Higienitas</button><button class="topic">⏱️ Waktu Distribusi</button><button class="topic">🍱 Porsi / Menu Tidak Sesuai</button><button class="topic">💡 Saran &amp; Aspirasi</button></div>
+<div class="formgrid"><div class="field"><label>Nama Anda (Opsional / Anonim):</label><input id="nama" placeholder="Contoh: Budi / Siswa"></div><div class="field"><label>No. WhatsApp / HP (Opsional):</label><input id="hp" placeholder="Contoh: 081234567890"></div></div>
+<div class="field"><label>Uraian Keluhan, Kendala, atau Masukan: *</label><textarea id="keluhan" placeholder="Jelaskan secara ringkas kendala menu makanan atau pelayanan SPPG hari ini..."></textarea></div>
+<div class="actions"><button class="wa" onclick="kirimWA()">💬 Kirim via WhatsApp Langsung</button><button class="digital" onclick="alert('Bagian ini bisa dihubungkan ke Google Form/database.')">➤ Kirim ke Kotak Digital</button></div>
+</div></section>
+
+<div class="qr">▦ &nbsp; Pindai QR Code Lain</div>
+
 <!-- ADMIN -->
 <button class="admin-open" onclick="bukaAdmin()">🔐 EDIT MENU / ADMIN</button>
 
